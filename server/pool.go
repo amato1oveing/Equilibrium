@@ -6,6 +6,11 @@ import (
 	"net/url"
 )
 
+const (
+	Robin  = "robin"
+	Weight = "weight"
+)
+
 type ServerPool interface {
 	AddBackend(serverUrl *url.URL, weight int, proxy *httputil.ReverseProxy)
 	GetNextPeer() *backend.Backend
@@ -17,10 +22,10 @@ type ServerPool interface {
 func NewServerPool(roundType string, port int) *ServerPool {
 	var pool ServerPool
 	switch roundType {
-	case "robin":
-		pool = &RoundRobinPool{Port: port}
-	case "weight":
-		pool = &WeightRoundRobinPool{Port: port, backends: make(map[*backend.Backend]int)}
+	case Robin:
+		pool = &RoundRobinPool{port: port}
+	case Weight:
+		pool = &WeightRoundRobinPool{port: port}
 	default:
 		panic("unsupported round type")
 	}

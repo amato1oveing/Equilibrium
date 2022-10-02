@@ -14,7 +14,7 @@ import (
 type RoundRobinPool struct {
 	backends []*backend.Backend // 后端服务列表
 	current  uint64             // 当前后端服务索引
-	Port     int
+	port     int
 }
 
 // AddBackend 添加后端服务
@@ -59,5 +59,5 @@ func (s *RoundRobinPool) GetBackends() []*backend.Backend {
 }
 
 func (s *RoundRobinPool) GetPort() int {
-	return s.Port
+	return s.port
 }

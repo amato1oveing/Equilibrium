@@ -79,8 +79,8 @@ func lb(w http.ResponseWriter, r *http.Request) {
 func Start(config *config.Config) {
 	serverPool := addServerPool(config.RoundType, config.Port)
 	// 解析后端服务器地址
-	for tok, weight := range config.Servers {
-		serverUrl, err := url.Parse(tok)
+	for _, node := range config.Nodes {
+		serverUrl, err := url.Parse(node.Host)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -108,7 +108,7 @@ func Start(config *config.Config) {
 			lb(writer, request.WithContext(ctx))
 		}
 
-		(*serverPool).AddBackend(serverUrl, weight, proxy)
+		(*serverPool).AddBackend(serverUrl, node.Weight, proxy)
 		log.Printf("Configured server: %s\n", serverUrl)
 	}
 
@@ -117,7 +117,7 @@ func Start(config *config.Config) {
 		Handler: http.HandlerFunc(lb),
 	}
 
-	// 启动健康检s
+	// 启动健康检查
 	go util.HealthCheck((*serverPool).GetBackends())
 
 	log.Printf("Load Balancer started at :%d\n", config.Port)

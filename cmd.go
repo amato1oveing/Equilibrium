@@ -9,14 +9,14 @@ import (
 
 func main() {
 	var filePath string
-	flag.StringVar(&filePath, "config", "config-example.conf", "config file path")
+	flag.StringVar(&filePath, "config", "config-example.yml", "config file path")
 	flag.Parse()
 
 	config.NewConfig(filePath)
 	configs := config.GetConfig()
 
 	for _, cfg := range configs {
-		log.Printf("Starting server: %s\n", cfg.Name)
+		log.Printf("Starting server: %s\n", cfg.ServiceName)
 		go server.Start(cfg)
 	}
 
