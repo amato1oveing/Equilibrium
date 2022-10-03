@@ -21,6 +21,10 @@ type WeightRoundRobinPool struct {
 	mux         sync.RWMutex
 }
 
+func NewWeightRoundRobinPool(port int) *WeightRoundRobinPool {
+	return &WeightRoundRobinPool{port: port}
+}
+
 func (w *WeightRoundRobinPool) AddBackend(serverUrl *url.URL, weight int, proxy *httputil.ReverseProxy) {
 	w.backends = append(w.backends, backend.NewBackend(serverUrl, proxy))
 	w.weights = append(w.weights, weight)

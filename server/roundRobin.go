@@ -17,6 +17,10 @@ type RoundRobinPool struct {
 	port     int
 }
 
+func NewRoundRobinPool(port int) *RoundRobinPool {
+	return &RoundRobinPool{port: port}
+}
+
 // AddBackend 添加后端服务
 func (s *RoundRobinPool) AddBackend(serverUrl *url.URL, weight int, proxy *httputil.ReverseProxy) {
 	s.backends = append(s.backends, backend.NewBackend(serverUrl, proxy))
@@ -35,11 +39,9 @@ func (s *RoundRobinPool) GetNextPeer() *backend.Backend {
 		idx := i % len(s.backends) // 避免数组越界
 		// 如果后端服务可用，则返回
 		if (*s.backends[idx]).IsAlive() {
-			if i != next {
-				atomic.StoreUint64(&s.current, uint64(idx)) // 更新当前后端服务索引
-			}
 			return s.backends[idx]
 		}
+		atomic.AddUint64(&s.current, uint64(1)) // 后端服务不可用，索引加1
 	}
 	return nil
 }

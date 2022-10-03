@@ -9,7 +9,7 @@ import (
 
 func main() {
 	var filePath string
-	flag.StringVar(&filePath, "config", "config-example.yml", "config file path")
+	flag.StringVar(&filePath, "config", "config-example.conf", "config file path")
 	flag.Parse()
 
 	config.NewConfig(filePath)

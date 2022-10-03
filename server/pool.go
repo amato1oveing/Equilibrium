@@ -9,6 +9,8 @@ import (
 const (
 	Robin  = "robin"
 	Weight = "weight"
+	IpHash = "iphash"
+	Random = "random"
 )
 
 type ServerPool interface {
@@ -23,9 +25,13 @@ func NewServerPool(roundType string, port int) *ServerPool {
 	var pool ServerPool
 	switch roundType {
 	case Robin:
-		pool = &RoundRobinPool{port: port}
+		pool = NewRoundRobinPool(port)
 	case Weight:
-		pool = &WeightRoundRobinPool{port: port}
+		pool = NewWeightRoundRobinPool(port)
+	case IpHash:
+		pool = NewIpHashPool(port)
+	case Random:
+		pool = NewRandomPool(port)
 	default:
 		panic("unsupported round type")
 	}
