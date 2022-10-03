@@ -42,18 +42,13 @@ func GetRetryFromContext(r *http.Request) int {
 	return 0
 }
 
-func GetServerPool(port string) *ServerPool {
-	portInt := 0
-	_, err := fmt.Sscanf(port, "%d", &portInt)
-	if err != nil {
-		log.Fatal(err)
-	}
+func GetServerPool(port int) *ServerPool {
 	for i, pool := range serverPoolList {
-		if (*pool).GetPort() == portInt {
+		if (*pool).GetPort() == port {
 			return serverPoolList[i]
 		}
 	}
-	log.Fatal("ServerPool not found")
+	log.Printf("No server pool found for port %d\n", port)
 	return nil
 }
 
@@ -66,7 +61,11 @@ func lb(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	serverPool := GetServerPool(r.URL.Port())
+	serverPool := GetServerPool(util.GetPortFromHost(r.Host))
+	if serverPool == nil {
+		http.Error(w, "Service not available", http.StatusServiceUnavailable)
+		return
+	}
 	peer := (*serverPool).GetNextPeer()
 	if peer != nil {
 		peer.GetProxy().ServeHTTP(w, r)

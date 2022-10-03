@@ -5,6 +5,8 @@ import (
 	"log"
 	"net"
 	"net/url"
+	"strconv"
+	"strings"
 	"time"
 )
 
@@ -44,4 +46,18 @@ func isBackendAlive(u *url.URL) bool {
 	}
 	defer conn.Close()
 	return true
+}
+
+// GetPortFromHost 从host中获取端口号
+func GetPortFromHost(host string) int {
+	sli := strings.Split(host, ":")
+	if len(sli) == 2 {
+		port, err := strconv.Atoi(sli[1])
+		if err != nil {
+			log.Println("Error parsing port from host: ", err)
+			return 0
+		}
+		return port
+	}
+	return 0
 }

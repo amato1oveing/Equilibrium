@@ -15,13 +15,12 @@ import (
 
 type RandomPool struct {
 	backends []*backend.Backend
-	random   *rand.Rand
 	port     int
 }
 
 func NewRandomPool(port int) *RandomPool {
-	pool := &RandomPool{random: &rand.Rand{}, port: port}
-	pool.random.Seed(time.Now().UnixNano())
+	pool := &RandomPool{port: port}
+	rand.Seed(time.Now().UnixNano())
 	return pool
 }
 
@@ -30,7 +29,7 @@ func (r *RandomPool) AddBackend(serverUrl *url.URL, weight int, proxy *httputil.
 }
 
 func (r *RandomPool) GetNextPeer() *backend.Backend {
-	next := r.random.Intn(len(r.backends))
+	next := rand.Intn(len(r.backends))
 	l := len(r.backends) + next
 	for i := next; i < l; i++ {
 		idx := i % len(r.backends)
