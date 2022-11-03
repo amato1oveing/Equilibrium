@@ -2,6 +2,7 @@ package server
 
 import (
 	"LB/backend"
+	"net/http"
 	"net/http/httputil"
 	"net/url"
 )
@@ -15,7 +16,7 @@ const (
 
 type ServerPool interface {
 	AddBackend(serverUrl *url.URL, weight int, proxy *httputil.ReverseProxy)
-	GetNextPeer() *backend.Backend
+	GetNextPeer(r *http.Request) *backend.Backend
 	MarkBackendStatus(backendUrl *url.URL, alive bool)
 	GetBackends() []*backend.Backend
 	GetPort() int

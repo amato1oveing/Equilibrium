@@ -8,6 +8,7 @@ package server
 import (
 	"LB/backend"
 	"math/rand"
+	"net/http"
 	"net/http/httputil"
 	"net/url"
 	"time"
@@ -28,7 +29,7 @@ func (r *RandomPool) AddBackend(serverUrl *url.URL, weight int, proxy *httputil.
 	r.backends = append(r.backends, backend.NewBackend(serverUrl, proxy))
 }
 
-func (r *RandomPool) GetNextPeer() *backend.Backend {
+func (r *RandomPool) GetNextPeer(_ *http.Request) *backend.Backend {
 	next := rand.Intn(len(r.backends))
 	l := len(r.backends) + next
 	for i := next; i < l; i++ {

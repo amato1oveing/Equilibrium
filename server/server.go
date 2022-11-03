@@ -66,7 +66,7 @@ func lb(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Service not available", http.StatusServiceUnavailable)
 		return
 	}
-	peer := (*serverPool).GetNextPeer()
+	peer := (*serverPool).GetNextPeer(r)
 	if peer != nil {
 		peer.GetProxy().ServeHTTP(w, r)
 		return

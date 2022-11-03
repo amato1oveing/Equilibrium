@@ -6,6 +6,7 @@ package server
 
 import (
 	"LB/backend"
+	"net/http"
 	"net/http/httputil"
 	"net/url"
 	"sync"
@@ -31,7 +32,7 @@ func (w *WeightRoundRobinPool) AddBackend(serverUrl *url.URL, weight int, proxy 
 	w.weightTotal += weight
 }
 
-func (w *WeightRoundRobinPool) GetNextPeer() *backend.Backend {
+func (w *WeightRoundRobinPool) GetNextPeer(_ *http.Request) *backend.Backend {
 	//根据权重选择下一个后端服务
 	next := int(atomic.AddUint64(&w.current, uint64(1)) % uint64(w.weightTotal))
 	for i := 0; i < len(w.weights)*2; i++ { // 避免无限循环

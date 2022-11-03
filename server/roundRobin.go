@@ -6,6 +6,7 @@ package server
 
 import (
 	"LB/backend"
+	"net/http"
 	"net/http/httputil"
 	"net/url"
 	"sync/atomic"
@@ -32,7 +33,7 @@ func (s *RoundRobinPool) nextIndex() int {
 }
 
 // GetNextPeer 获取下一个可用的后端服务
-func (s *RoundRobinPool) GetNextPeer() *backend.Backend {
+func (s *RoundRobinPool) GetNextPeer(_ *http.Request) *backend.Backend {
 	next := s.nextIndex()
 	l := len(s.backends) + next // 避免无限循环
 	for i := next; i < l; i++ {
